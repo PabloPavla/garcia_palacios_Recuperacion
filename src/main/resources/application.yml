@@ -1,0 +1,54 @@
+spring:
+    application:
+        name: WatchAPI
+
+    datasource:
+        url: ${url:jdbc:mysql://localhost:3306/watchapi?useUnicode=true&useLegacyDatetimeCode=false&serverTimezone=UTC}
+        username: ${user:root}
+        password: ${pass:root}
+
+    jpa:
+        hibernate:
+            ddl-auto: validate
+        properties:
+            hibernate:
+                dialect: org.hibernate.dialect.MySQLDialect 
+        show-sql: true
+        defer-datasource-initialization: true
+        
+    sql:
+        init:
+            data-locations:
+            - classpath:db/mysql/schema.sql
+            - classpath:db/mysql/data.sql
+            mode: ${dbinitmode:always}
+
+logging:
+    level:
+        root: INFO
+        org.hibernate.SQL: DEBUG
+        org.vedruna.watchapi: TRACE
+    file:
+        name: logs/app.log
+    pattern:
+        console: "%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level %logger{36} - %msg%n"
+        file: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+
+springdoc:
+    writer-with-order-by-keys: true
+
+management:
+    endpoints:
+        web:
+            exposure:
+                include: "*"
+    endpoint:
+        health:
+            show:
+                details: always
+
+auth:
+    access-token-secret-key: lMCvj7Sirkk41OpuXDBKoSA1YeQ4aTeHmP4gzoyoaLk=
+    access-token-expiration: 180000
+    refresh-token-secret-key: laCvj7Sirkk41OpuXDBKoSA1YeQ4aTeHmP4gzoyoaLk=
+    refresh-token-expiration: 604800000
