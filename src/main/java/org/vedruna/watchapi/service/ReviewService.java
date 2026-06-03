@@ -14,6 +14,7 @@ import org.vedruna.watchapi.persistance.repository.TitleRepository;
 import org.vedruna.watchapi.persistance.repository.UserRepository;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -22,6 +23,7 @@ import java.util.List;
  */
 @Service
 @AllArgsConstructor
+@Slf4j
 public class ReviewService {
 
     private final ReviewRepository reviewRepository;
@@ -36,7 +38,10 @@ public class ReviewService {
      * @return Lista de reseñas encontradas.
      */
     public List<Review> getReviewsByTitle(Integer watchmodeId) {
-        return reviewRepository.findByTitleWatchmodeId(watchmodeId);
+        log.info("Buscando en repositorio reseñas para el watchmodeId: {}", watchmodeId);
+        List<Review> reviews = reviewRepository.findByTitleWatchmodeId(watchmodeId);
+        log.info("Se encontraron {} reseñas para el watchmodeId: {}", reviews.size(), watchmodeId);
+        return reviews;
     }
 
     /**
@@ -48,9 +53,11 @@ public class ReviewService {
      * @return La entidad Review guardada.
      */
     public Review createReview(ReviewRequestDTO request, User user) {
+        log.info("Creando nueva reseña para watchmodeId: {} por usuario: {}", request.getWatchmodeId(), user.getUsername());
         // 1. Obtiene el título localmente o lo descarga desde la API externa de Watchmode
         Title title = titleRepository.findByWatchmodeId(request.getWatchmodeId())
                 .orElseGet(() -> {
+                    log.info("Título con watchmodeId {} no encontrado localmente. Descargando de Watchmode API...", request.getWatchmodeId());
                     WatchmodeTitleDetailsDTO details = watchmodeService.getTitleDetails(request.getWatchmodeId());
                     Title newTitle = new Title();
                     newTitle.setWatchmodeId(details.getId());
@@ -64,7 +71,9 @@ public class ReviewService {
                         newTitle.setGenre("Unknown");
                     }
                     
-                    return titleRepository.save(newTitle);
+                    Title saved = titleRepository.save(newTitle);
+                    log.info("Título '{}' guardado localmente con éxito", saved.getTitleName());
+                    return saved;
                 });
 
         // 2. Obtiene la entidad del usuario logueado desde la base de datos
@@ -79,7 +88,9 @@ public class ReviewService {
         review.setUser(userEntity);
         review.setTitle(title);
 
-        return reviewRepository.save(review);
+        Review savedReview = reviewRepository.save(review);
+        log.info("Reseña creada con éxito. ID: {}, Rating: {}", savedReview.getReviewId(), savedReview.getRating());
+        return savedReview;
     }
 
     /**
@@ -91,11 +102,14 @@ public class ReviewService {
      * @return La entidad Review modificada.
      */
     public Review updateReview(Integer reviewId, ReviewEditRequestDTO request, User user) {
+        log.info("Actualizando reseña ID: {} por usuario: {}", reviewId, user.getUsername());
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new ResourceNotFoundException("Reseña no encontrada con ID " + reviewId));
 
         // Validación de propiedad
         if (!review.getUser().getUserId().equals(user.getUserId())) {
+            log.warn("El usuario '{}' intentó editar la reseña ID {} que pertenece al usuario ID {}", 
+                     user.getUsername(), reviewId, review.getUser().getUserId());
             throw new BadRequestException("No tienes permisos para editar esta reseña porque no te pertenece.");
         }
 
@@ -103,7 +117,9 @@ public class ReviewService {
         review.setRating(request.getRating());
         review.setEditDate(LocalDateTime.now());
 
-        return reviewRepository.save(review);
+        Review updatedReview = reviewRepository.save(review);
+        log.info("Reseña ID {} actualizada con éxito", updatedReview.getReviewId());
+        return updatedReview;
     }
 
     /**
@@ -113,14 +129,18 @@ public class ReviewService {
      * @param user Usuario autenticado.
      */
     public void deleteReview(Integer reviewId, User user) {
+        log.info("Eliminando reseña ID: {} por usuario: {}", reviewId, user.getUsername());
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new ResourceNotFoundException("Reseña no encontrada con ID " + reviewId));
 
         // Validación de propiedad
         if (!review.getUser().getUserId().equals(user.getUserId())) {
+            log.warn("El usuario '{}' intentó eliminar la reseña ID {} que pertenece al usuario ID {}", 
+                     user.getUsername(), reviewId, review.getUser().getUserId());
             throw new BadRequestException("No tienes permisos para eliminar esta reseña porque no te pertenece.");
         }
 
         reviewRepository.delete(review);
+        log.info("Reseña ID {} eliminada con éxito del repositorio", reviewId);
     }
 }
