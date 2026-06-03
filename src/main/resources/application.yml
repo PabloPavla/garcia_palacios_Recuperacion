@@ -52,3 +52,7 @@ auth:
     access-token-expiration: 180000
     refresh-token-secret-key: laCvj7Sirkk41OpuXDBKoSA1YeQ4aTeHmP4gzoyoaLk=
     refresh-token-expiration: 604800000
+
+watchmode:
+    api-key: ${watchmode.api-key:AQUÍ_IRÁ_TU_CLAVE}
+    url: https://api.watchmode.com/v1
