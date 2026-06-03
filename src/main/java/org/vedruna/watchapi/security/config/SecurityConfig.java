@@ -48,8 +48,8 @@ public class SecurityConfig {
                 // 2. Configura las reglas de autorización para las peticiones HTTP
                 .authorizeHttpRequests(authReq ->
                         authReq
-                                // Permite acceso sin autenticación a endpoints de registro y login
-                                .requestMatchers("/auth/**").permitAll()
+                                // Permite acceso sin autenticación a endpoints de registro, login y refresh
+                                .requestMatchers("/auth/register", "/auth/login", "/auth/refresh").permitAll()
                                 // Permite acceso sin autenticación a documentación OpenAPI/Swagger
                                 .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                                 // Permite acceso sin autenticación a endpoints públicos indicados en el enunciado

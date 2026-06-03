@@ -95,6 +95,10 @@ public class AuthController {
     })
     @GetMapping(value = "/me")
     public UserDTO me(@AuthenticationPrincipal User userLogueado) {
+        if (userLogueado == null) {
+            log.warn("Solicitud /auth/me recibida sin usuario autenticado en el contexto.");
+            return null;
+        }
         log.info("Recibida solicitud /auth/me para el usuario autenticado: {}", userLogueado.getUsername());
         return userConverter.toDto(userLogueado);
     }
