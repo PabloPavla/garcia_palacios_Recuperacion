@@ -3,7 +3,7 @@ spring:
         name: WatchAPI
 
     datasource:
-        url: ${url:jdbc:mysql://localhost:3306/watchapi?useUnicode=true&useLegacyDatetimeCode=false&serverTimezone=UTC}
+        url: ${url:jdbc:mysql://localhost:3306/watchapi?createDatabaseIfNotExist=true&useUnicode=true&useLegacyDatetimeCode=false&serverTimezone=UTC}
         username: ${user:root}
         password: ${pass:root}
 
@@ -14,7 +14,7 @@ spring:
             hibernate:
                 dialect: org.hibernate.dialect.MySQLDialect 
         show-sql: true
-        defer-datasource-initialization: true
+        defer-datasource-initialization: false
         
     sql:
         init:
@@ -54,5 +54,5 @@ auth:
     refresh-token-expiration: 604800000
 
 watchmode:
-    api-key: ${watchmode.api-key:eYMd85BmRAUnBKzacmIKALDvvvMCcQcTlp7Uv5xk}
+    api-key: ${WATCHMODE_API_KEY:eYMd85BmRAUnBKzacmIKALDvvvMCcQcTlp7Uv5xk}
     url: https://api.watchmode.com/v1
