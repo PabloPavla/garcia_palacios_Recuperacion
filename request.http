@@ -1,0 +1,136 @@
+### variables
+@baseUrl = http://localhost:8080
+@authToken = <PEGAR_TOKEN_AQUI>
+@refreshToken = <PEGAR_REFRESH_TOKEN_AQUI>
+
+### =========================================================================
+### 1. AUTENTICACIÓN Y REGISTRO
+### =========================================================================
+
+### REGISTER - Registrar un nuevo usuario
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+    "username": "usuario_test",
+    "password": "Password123",
+    "email": "test@localhost.com",
+    "description": "Usuario de pruebas para la API"
+}
+
+### LOGIN - Iniciar sesión
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+    "username": "usuario_test",
+    "password": "Password123"
+}
+
+### LOGIN ADMIN - Iniciar sesión como administrador inicial
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+    "username": "admin",
+    "password": "Abcd1234"
+}
+
+### ME - Obtener información del usuario autenticado
+GET {{baseUrl}}/auth/me
+Authorization: Bearer {{authToken}}
+
+### REFRESH - Refrescar el token de acceso
+POST {{baseUrl}}/auth/refresh
+Content-Type: application/json
+
+{
+    "refreshToken": "{{refreshToken}}"
+}
+
+
+### =========================================================================
+### 2. TÍTULOS (BÚSQUEDA)
+### =========================================================================
+
+### SEARCH TITLES - Buscar películas o series en Watchmode por nombre
+GET {{baseUrl}}/titles/search?name=Breaking Bad
+Authorization: Bearer {{authToken}}
+
+
+### =========================================================================
+### 3. FAVORITOS
+### =========================================================================
+
+### ADD FAVORITE - Añadir película o serie a favoritos (Ej: Breaking Bad, ID 317390)
+POST {{baseUrl}}/favorites/317390
+Authorization: Bearer {{authToken}}
+
+### GET MY FAVORITES - Listar todos mis títulos favoritos
+GET {{baseUrl}}/favorites/me
+Authorization: Bearer {{authToken}}
+
+### DELETE FAVORITE - Eliminar de favoritos
+DELETE {{baseUrl}}/favorites/317390
+Authorization: Bearer {{authToken}}
+
+
+### =========================================================================
+### 4. RESEÑAS (REVIEWS)
+### =========================================================================
+
+### GET REVIEWS FOR TITLE - Obtener todas las reseñas de un título (Público)
+GET {{baseUrl}}/titles/317390/reviews
+
+### CREATE REVIEW - Crear una reseña sobre un título (Ej: Breaking Bad)
+POST {{baseUrl}}/reviews
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+    "content": "¡Una serie espectacular con actuaciones estelares!",
+    "rating": 10,
+    "watchmodeId": 317390
+}
+
+### UPDATE REVIEW - Modificar una reseña propia (Reemplazar {id} por ID real devuelto al crearla)
+PUT {{baseUrl}}/reviews/1
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+    "content": "Edición: Sigue siendo la mejor serie, sumamente recomendada.",
+    "rating": 9
+}
+
+### DELETE REVIEW - Eliminar una reseña propia (Reemplazar {id} por ID real)
+DELETE {{baseUrl}}/reviews/1
+Authorization: Bearer {{authToken}}
+
+
+### =========================================================================
+### 5. PERFILES DE USUARIO
+### =========================================================================
+
+### GET PROFILE - Obtener perfil público de un usuario (Público)
+GET {{baseUrl}}/users/usuario_test
+
+### PATCH USERNAME - Cambiar el nombre del usuario autenticado
+PATCH {{baseUrl}}/users/me/username
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+    "username": "usuario_renombrado"
+}
+
+
+### =========================================================================
+### 6. SPRING BOOT ACTUATOR
+### =========================================================================
+
+### ACTUATOR HEALTH - Estado de salud de la aplicación
+GET {{baseUrl}}/actuator/health
+
+### ACTUATOR INFO - Información de la aplicación
+GET {{baseUrl}}/actuator/info
