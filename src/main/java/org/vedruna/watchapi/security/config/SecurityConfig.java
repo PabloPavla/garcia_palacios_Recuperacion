@@ -56,6 +56,8 @@ public class SecurityConfig {
                                 .requestMatchers("/public").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/titles/*/reviews").permitAll() // Obtener reseñas de un título es público
                                 .requestMatchers(HttpMethod.GET, "/users/*").permitAll() // Ver perfil de otro usuario es público
+                                // Permite acceso público a los endpoints de Actuator
+                                .requestMatchers("/actuator/**").permitAll()
                                 // Cualquier otra petición requiere autenticación
                                 .anyRequest().authenticated()
                 )

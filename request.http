@@ -1,7 +1,7 @@
 ### variables
 @baseUrl = http://localhost:8080
-@authToken = <PEGAR_TOKEN_AQUI>
-@refreshToken = <PEGAR_REFRESH_TOKEN_AQUI>
+@authToken = <token>
+@refreshToken = <refreshToken>
 
 ### =========================================================================
 ### 1. AUTENTICACIÓN Y REGISTRO
@@ -12,9 +12,9 @@ POST {{baseUrl}}/auth/register
 Content-Type: application/json
 
 {
-    "username": "usuario_test",
+    "username": "usuario_test1",
     "password": "Password123",
-    "email": "test@localhost.com",
+    "email": "test1@localhost.com",
     "description": "Usuario de pruebas para la API"
 }
 
@@ -23,7 +23,7 @@ POST {{baseUrl}}/auth/login
 Content-Type: application/json
 
 {
-    "username": "usuario_test",
+    "username": "usuario_test1",
     "password": "Password123"
 }
 
@@ -62,8 +62,8 @@ Authorization: Bearer {{authToken}}
 ### 3. FAVORITOS
 ### =========================================================================
 
-### ADD FAVORITE - Añadir película o serie a favoritos (Ej: Breaking Bad, ID 317390)
-POST {{baseUrl}}/favorites/317390
+### ADD FAVORITE - Añadir película o serie a favoritos (Ej:Breaking Bad, ID:3173903)
+POST {{baseUrl}}/favorites/3173903
 Authorization: Bearer {{authToken}}
 
 ### GET MY FAVORITES - Listar todos mis títulos favoritos
